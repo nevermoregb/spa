@@ -5,7 +5,7 @@ spring:
 #    driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
 #    url: jdbc:log4jdbc:mariadb://localhost:3311/spa?autoReconnect=true
     username: root
-    password: 1234
+    password: 1234     123123
   mvc:
     view:
       prefix: /WEB-INF/views/
