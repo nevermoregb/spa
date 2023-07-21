@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.park.spa.mapper.MemberMapper">
+
+	<!-- 회원리스트 -->
+    <select id="getAllMemberList" resultType="MemberVo">
+        SELECT 
+        	USERIDX,
+        	USERID,
+        	USERPW,
+        	USERAUTH,
+        	REGDATE,
+        	USEAGE
+        FROM 
+        	SPAUSER;
+    </select>
+    
+	<!-- 회원정보 -->
+    <select id="getMemberDetail" parameterType="String" resultType="MemberVo">
+        SELECT 
+        	USERIDX,
+        	USERID,
+        	USERPW,
+        	USERAUTH,
+        	REGDATE,
+        	USEAGE
+        FROM 
+        	SPAUSER
+        WHERE
+        	USERID =  #{username}
+    </select>
+
+</mapper>

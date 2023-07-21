@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="300 seconds">
+
+    <appender name="STDOUT_OUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{HH:mm:ss} %-5level %logger{50}:%L %mdc] %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="root" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/log/root.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/spa.log.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{HH:mm:ss} %-5level %logger{26}:%L %mdc] %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>/log/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/spa.error.log.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{HH:mm:ss} %-5level %C{14}.%M{26}:%L %mdc %thread] %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+    </appender>
+    
+    <logger name="org.springframework" level="info" />
+    
+<!--     <logger name="com.zaxxer.hikari"  > -->
+<!--         <level value="DEBUG" /> -->
+<!--     </logger> -->
+
+    <logger name="ch.qos.logback" level="debug" />
+
+    <logger name="com.zaxxer" level="ERROR" />
+
+    <logger name="org.apache.ibatis" level="warn" />
+    
+    <logger name="org.org.mybatis" level="warn" />
+
+    <logger name="jdbc.connection" level="WARN" />
+
+    <logger name="jdbc.resultset" level="info" />
+    
+    <logger name="jdbc.resultsettable" level="DEBUG" />
+
+    <logger name="jdbc.audit" level="WARN" />
+
+    <logger name="jdbc.sqlonly" level="WARN" />
+
+    <logger name="jdbc.connection" level="warn" />
+
+    <!-- Root Logger -->
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT_OUT" />
+        <appender-ref ref="root" />
+        <appender-ref ref="errorLog" />
+    </root>
+</configuration>
