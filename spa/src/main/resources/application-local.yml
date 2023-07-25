@@ -5,7 +5,7 @@ spring:
 #    driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
 #    url: jdbc:log4jdbc:mariadb://localhost:3311/spa?autoReconnect=true
     username: root
-    password: 1234     123123
+    password: 1234
   mvc:
     view:
       prefix: /WEB-INF/views/
@@ -21,6 +21,9 @@ spring:
           auth: true
           starttls:
             enable: true
+  messages:
+    basename: classpath:message/security_message.properties
+    encoding: utf-8
     
 logging:
   config: classpath:log/logback.xml
@@ -28,7 +31,6 @@ logging:
 mybatis:
   mapper-locations: mapper/*.xml
   config-location: classpath:mybatis/mybatis-config.xml
-  
 #log4jdbc:
 #  drivers: org.mariadb.jdbc.Driver
 #log4jdbc.drivers:org.mariadb.jdbc.Driver    

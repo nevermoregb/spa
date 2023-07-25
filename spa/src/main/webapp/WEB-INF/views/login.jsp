@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -15,9 +16,6 @@
 <body>
 <div class="container">
     <form id="loginForm" class="form-signin" method="post" action="/loginProc">
-        <p class="text-center">
-<!--             <img src="/images/profile.png" class="img-thumbnail" style="width: 200px;" alt="이 글이 보인다면 시큐리티 설정 잘못한거임!"> -->
-        </p>
         <h2 class="form-signin-heading text-center mb-5">로그인</h2>
 
         <p>
@@ -29,6 +27,23 @@
             <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" required="">
         </p>
         
+        <c:if test="${not empty requestScope.errorMessage }">
+        	<p>123123${requestScope.errorMessage }</p>
+        </c:if>
+        
+        <c:if test="${not empty errorMessage }">
+        	<p>123123${errorMessage }</p>
+        </c:if>
+        
+        <c:if test="${not empty test }">
+        	<p>${test }</p>
+        </c:if>
+        
+        <c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION }">
+			<p style="color:red; font-weight:bold;">${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message }</p>
+			<c:remove var="SPRING_SECURITY_LAST_EXCEPTION" scope="session" />
+		</c:if>
+		
         <button id="loginBtn" class="btn btn-lg btn-primary btn-block" type="button">로그인</button>
         <button id="joinMember" class="btn btn-lg btn-warning btn-block" type="button" onclick="javascript:location.href='/main/join'" >회원가입하기</button>
         
@@ -40,6 +55,8 @@
 // $('#joinMember').on('click', function(){
 // 	location.href="/main/join";
 // });
+
+
 
 var $post = function(url, form) {
 	return $.ajax({

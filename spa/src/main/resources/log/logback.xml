@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="300 seconds">
+<configuration debug="true" scan="true" scanPeriod="300 seconds">
 
     <appender name="STDOUT_OUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -37,19 +37,19 @@
         </encoder>
     </appender>
     
-    <logger name="org.springframework" level="info" />
+<!--     <logger name="org.springframework" level="debug" additivity="false" /> -->
     
 <!--     <logger name="com.zaxxer.hikari"  > -->
 <!--         <level value="DEBUG" /> -->
 <!--     </logger> -->
 
-    <logger name="ch.qos.logback" level="debug" />
+<!--     <logger name="ch.qos.logback" level="debug" /> -->
 
-    <logger name="com.zaxxer" level="ERROR" />
+<!--     <logger name="com.zaxxer" level="ERROR" /> -->
 
-    <logger name="org.apache.ibatis" level="warn" />
+<!--     <logger name="org.apache.ibatis" level="warn" /> -->
     
-    <logger name="org.org.mybatis" level="warn" />
+<!--     <logger name="org.org.mybatis" level="warn" /> -->
 
     <logger name="jdbc.connection" level="WARN" />
 

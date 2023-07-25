@@ -7,7 +7,6 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @SpringBootApplication
 public class SpaApplication {
 
