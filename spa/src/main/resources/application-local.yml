@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 spring:
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
@@ -35,3 +36,6 @@ mybatis:
 #  drivers: org.mariadb.jdbc.Driver
 #log4jdbc.drivers:org.mariadb.jdbc.Driver    
   
+=======
+
+>>>>>>> refs/remotes/origin/main
