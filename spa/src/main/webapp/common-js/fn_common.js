@@ -358,3 +358,68 @@ function getParameterByName(name) {
 function refresh() {
     window.location.reload();
 };
+
+// 클래스에 공백 문자 제거 기능 추가 함수
+$(document).on("propertychange change keyup paste input", ".removeWhiteSpace", function(event) {
+    $(this).val($(this).val().replace(/\s/g, ""));
+});
+
+
+//이메일 유효성 
+
+var emailValid = function(obj){
+//    var domainRegExp = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}/;
+//    var mailNameRegExp = /^[0-9a-zA-Z-\.+\-*\/\%\"\'\(\)\[\]\{\}\~\!\?\=\:\:\,\;\|#\$\&\^\_\?]+$/;
+    var typeEmail = /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
+    var notKor = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+    var spaceChk = /\s/g;
+    var id = obj.val();
+
+    var name = id.trim().toLowerCase();
+
+    if(name == "" || notKor.test(name) || !typeEmail.test(name)) {
+		alert("올바른 이메일을 입력해 주세요.");
+		return false;
+    } else {
+		return true;
+	}
+};
+
+//json object 타입변환
+const formToJsonObj = function(data) {
+    if(typeof data !== "undefined") {
+        if(typeof data === "string") {
+            var obj = {};
+            data.replace(/\+/g, "%20").replace(/([^=&]+)=([^&]*)/g, function(m, key, value){
+                obj[decodeURIComponent(key)] = decodeURIComponent(value);
+            })
+            data = obj;
+        }
+
+        if(typeof data !== "object"){
+            alert("[Ajax Data Error]!!")
+        }
+    } else {
+        data = {};
+    }
+    return data;
+};
+
+const $post = function(url, param) {
+	return $.ajax({
+		type		: 'post',
+		dataType	: 'json',
+		contentType	: "application/json; charset=utf-8",
+		url			: url,
+		data		: JSON.stringify(formToJsonObj(param)),
+	})
+	
+	.fail(function(data, textStatus, xhr){
+	    if(data.responseCode) {
+			console.log(data.responseCode);
+			alert(data.responseCode);
+	    } else {
+			alert("오류 발생");
+		}
+	});
+};

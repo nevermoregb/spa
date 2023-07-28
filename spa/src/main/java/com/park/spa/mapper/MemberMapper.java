@@ -1,6 +1,7 @@
 package com.park.spa.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,5 +12,11 @@ public interface MemberMapper {
 	List<MemberVo> getAllMemberList();
 
 	MemberVo getMemberDetail(String userId);
+
+	int isMemeber(String userEmail);
+
+	int joinMember(MemberVo memberVo);
+
+	int isNameUsed(String userName);
 
 }

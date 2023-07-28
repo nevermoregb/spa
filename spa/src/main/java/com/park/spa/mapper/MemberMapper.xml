@@ -7,6 +7,7 @@
         SELECT 
         	USERIDX,
         	USERID,
+        	USERNAME,
         	USERPW,
         	USERAUTH,
         	REGDATE,
@@ -20,6 +21,7 @@
         SELECT 
         	USERIDX,
         	USERID,
+        	USERNAME,
         	USERPW,
         	USERAUTH,
         	REGDATE,
@@ -27,7 +29,48 @@
         FROM 
         	SPAUSER
         WHERE
-        	USERID =  #{username}
+        	USERID =  #{userName}
     </select>
+    
+	<!-- 가입회원 -->
+    <select id="isMemeber" parameterType="String" resultType="int">
+        SELECT 
+			COUNT(*)
+        FROM 
+        	SPAUSER
+        WHERE
+        	USERID =  #{userEmail}
+    </select>
+    
+	<!-- 사용 닉네임 -->
+    <select id="isNameUsed" parameterType="String" resultType="int">
+        SELECT 
+			COUNT(*)
+        FROM 
+        	SPAUSER
+        WHERE
+        	USERID =  #{userName}
+    </select>
+    
+	<!-- 가입회원 -->
+    <insert id="joinMember" parameterType="MemberVo">
+        INSERT INTO SPAUSER(
+        	USERID,
+        	USERPW,
+        	USERNAME,
+        	USERAUTH,
+        	REGDATE,
+        	MODDATE,
+        	USEAGE
+        ) VALUES (
+        	#{userId},
+        	#{userPw},
+        	#{userName},
+        	'U',
+        	NOW(),
+        	NOW(),
+        	'Y'
+        )
+    </insert>
 
 </mapper>

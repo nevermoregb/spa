@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Service;
 
+import com.park.spa.common.SessionUtil;
 import com.park.spa.common.constant.ConstantList;
 
 import jakarta.servlet.RequestDispatcher;
@@ -19,7 +20,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 로그인 실패 시 오류메세지를위한 클래스
+ * 로그인 실패 시 오류메세지를 위한 클래스
+ * 
+ * 오류메세지를 HttpServletRequest에 담아 로그인URL로 보낸다.
  */
 @Slf4j
 @Service
@@ -30,12 +33,10 @@ public class CustomAuthFailureHandler implements AuthenticationFailureHandler {
 			AuthenticationException exception) throws IOException, ServletException {
 		
 		log.debug("로그인 실패");
-		
 		String errorMessage;
 		
 		if(exception instanceof BadCredentialsException) {
 			errorMessage = "이메일과 비밀번호를 확인해 주세요.";
-//			errorMessage = exception.getMessage();
 		} else if(exception instanceof InternalAuthenticationServiceException) {
 			errorMessage = "내부적으로 발생한 시스템 문제로 인해 요청을 처리할 수 없습니다. 관리자에게 문의하세요.";
 		} else if(exception instanceof UsernameNotFoundException) {
@@ -46,16 +47,11 @@ public class CustomAuthFailureHandler implements AuthenticationFailureHandler {
 			errorMessage = "알수없는 오류발생";
 		}
 		
-		
 		request.setAttribute("errorMessage", errorMessage);
-//		request.getRequestDispatcher(ConstantList.DEFAULT_FAILURE_URL).forward(request, response);
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher(ConstantList.DEFAULT_FAILURE_URL);
 		dispatcher.forward(request, response);
 		
-//		errorMessage = URLEncoder.encode(errorMessage, "UTF-8");
-
-//		super.onAuthenticationFailure(request, response, exception);
 	}
 	
 

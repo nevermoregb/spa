@@ -27,22 +27,14 @@
             <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" required="">
         </p>
         
-        <c:if test="${not empty requestScope.errorMessage }">
-        	<p>123123${requestScope.errorMessage }</p>
-        </c:if>
-        
         <c:if test="${not empty errorMessage }">
-        	<p>123123${errorMessage }</p>
+        	<p style="color:red; font-weight:bold;">${errorMessage }</p>
         </c:if>
         
-        <c:if test="${not empty test }">
-        	<p>${test }</p>
-        </c:if>
-        
-        <c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION }">
-			<p style="color:red; font-weight:bold;">${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message }</p>
-			<c:remove var="SPRING_SECURITY_LAST_EXCEPTION" scope="session" />
-		</c:if>
+<%--         <c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION }"> --%>
+<%-- 			<p style="color:red; font-weight:bold;">${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message }</p> --%>
+<%-- 			<c:remove var="SPRING_SECURITY_LAST_EXCEPTION" scope="session" /> --%>
+<%-- 		</c:if> --%>
 		
         <button id="loginBtn" class="btn btn-lg btn-primary btn-block" type="button">로그인</button>
         <button id="joinMember" class="btn btn-lg btn-warning btn-block" type="button" onclick="javascript:location.href='/main/join'" >회원가입하기</button>
@@ -70,7 +62,7 @@ var $post = function(url, form) {
 		}
 	})
 	.done(function(data, xhr){
-alert(data);
+		alert(data);
 	})
 	.fail(function(data){
 	    if(data.responseCode) {
@@ -79,9 +71,6 @@ alert(data);
 	    }
 	});
 };
-
-
-
 
 $('#loginBtn').on('click', function(){
 // 	let formData = $('#loginForm').serialize();
