@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.park.spa.mapper.FileMapper">
+
+    <sql id="fileColumns">
+		FILE_FOREIGN_IDX
+		, FILE_NAME
+		, FILE_ORIG_NAME
+		, FILE_SIZE
+		, FILE_PATH
+		, FILE_ORDER
+		, FILE_REGDATE
+    </sql>
+
+	<insert id="saveFiles" parameterType="List">
+		INSERT INTO SPA_FILE2 (
+            <include refid="fileColumns" />
+       	) VALUES
+        <foreach item="file" collection="list" separator="," open="(" close=")" index="i">
+			#{fileForeignIdx}
+			, #{fileName}
+			, #{fileOrigName}
+			, #{fileSize}
+			, #{filePath}
+			, #{i}
+			, NOW()
+        </foreach>
+	</insert>
+
+</mapper>

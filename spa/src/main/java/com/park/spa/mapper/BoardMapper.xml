@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.park.spa.mapper.BoardMapper">
+
+	<!-- 게시판 리스트 (index화면)-->
+    <select id="getBoardList" resultType="BoardVo">
+        SELECT 
+        	A.BRDIDX,
+        	A.BRDUSERIDX,
+        	B.USERNAME,
+        	A.TITLE,
+        	A.CONTENT,
+        	A.VIEWCOUNT,
+        	A.REGDATE,
+        	A.MODDATE,
+        	A.MODUSERIDX,
+        	A.USEAGE
+        FROM 
+        	SPA_BOARD A
+       	LEFT JOIN 
+       		SPAUSER B ON BRDUSERIDX = B.USERIDX
+		WHERE
+			A.USEAGE = 'Y'
+		ORDER BY 
+			A.REGDATE DESC, A.BRDIDX DESC
+    </select>
+    
+	<!-- 게시판 리스트 -->
+    <select id="getBoardList2" resultType="BoardVo" parameterType="PageVo">
+        SELECT 
+        	A.BRDIDX,
+        	A.BRDUSERIDX,
+        	B.USERNAME,
+        	A.TITLE,
+        	A.CONTENT,
+        	A.VIEWCOUNT,
+        	A.REGDATE,
+        	A.MODDATE,
+        	A.MODUSERIDX,
+        	A.USEAGE
+        FROM 
+        	SPA_BOARD A
+       	LEFT JOIN 
+       		SPAUSER B ON BRDUSERIDX = B.USERIDX
+      	WHERE
+      		A.USEAGE = 'Y'
+      		<if test='searchKeyword != null and searchKeyword != ""'>
+	      		<choose>
+					<when test='searchType eq "writer"'	> AND B.USERNAME 	LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+					<when test='searchType eq "userIdx"'> AND A.BRDUSERIDX 	LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+					<when test='searchType eq "title"'	> AND A.TITLE 		LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+					<when test='searchType eq "content"'> AND A.CONTENT 	LIKE CONCAT('%', #{searchKeyword}, '%') </when>
+				</choose>	
+			</if>
+		ORDER BY 
+			A.REGDATE DESC, A.BRDIDX DESC
+    </select>
+    
+    <!-- 게시판 컨텐츠 작성 -->
+    <insert id="insertBoardContent" parameterType="BoardVo">
+        <selectKey resultType="string" keyProperty="brdIdx" order="AFTER">
+	        SELECT LAST_INSERT_ID();     
+	    </selectKey>
+	    
+		INSERT INTO spa_board3 (
+			BRDUSERIDX,
+			TITLE,
+			CONTENT,
+			MODDATE,
+			MODUSERIDX,
+			USEAGE
+		) VALUES (
+			#{brdUserIdx},
+			#{title},
+			#{content},
+			NOW(),
+			#{brdUserIdx},
+			'Y'
+		)
+    </insert>
+    
+<!--     <insert id="insStoreInfo" parameterType="BoardVo"> -->
+<!--     	INSERT ALL -->
+<!--     	INTO SPA_STOREINFO ( -->
+<!--     		STRBRDIDX, -->
+<!--     		STRNAME, -->
+<!--     		STRSTLINE, -->
+<!--     		STRSTNAME, -->
+<!--     		STRSTEXNO, -->
+<!--     		STRSTDIST -->
+<!--     	) VALUES ( -->
+<!--     		#{brdIdx}, -->
+<!--     		#{storeName}, -->
+<!--     		#{brdStLine}, -->
+<!--     		#{brdStName}, -->
+<!--     		#{brdStExNo}, -->
+<!--     		#{brdStDist} -->
+<!--     	) -->
+<!--     	INTO SPA_COORDINATE ( -->
+<!--     		COOBRDIDX, -->
+<!--     		COOMAPLAT, -->
+<!--     		COOMAPLON, -->
+<!--     		COOMAPLVL, -->
+<!--     		COOMAKLAT, -->
+<!--     		COOMAKLON -->
+<!-- 		) VALUES ( -->
+<!-- 			#{cooVo.cooBrdIdx}, -->
+<!-- 			#{cooVo.cooMapLat}, -->
+<!-- 			#{cooVo.cooMapLon}, -->
+<!-- 			#{cooVo.cooMapLvl}, -->
+<!-- 			#{cooVo.cooMakLat}, -->
+<!-- 			#{cooVo.cooMakLon} -->
+<!-- 		) -->
+<!-- 		SELECT * FROM DUAL -->
+<!--     </insert> -->
+    
+    <insert id="insStoreInfo" parameterType="BoardVo">
+        <selectKey resultType="string" keyProperty="storeVo.strIdx" order="AFTER">
+	        SELECT LAST_INSERT_ID();     
+	    </selectKey>
+    	INSERT INTO SPA_STOREINFO (
+    		STRBRDIDX,
+    		STRNAME,
+    		STRSTLINE,
+    		STRSTNAME,
+    		STRSTEXNO,
+    		STRSTDIST
+    	) VALUES (
+    		#{brdIdx},
+    		#{storeVo.storeName},
+    		#{storeVo.brdStLine},
+    		#{storeVo.brdStName},
+    		#{storeVo.brdStExNo},
+    		#{storeVo.brdStDist}
+    	)
+   	</insert>
+    
+	<!-- 카카오맵 정보입력 -->
+    <insert id="insBoardMapInfo" parameterType="CooVo">
+    	INSERT INTO SPA_COORDINATE (
+    		COOSTRIDX,
+    		COOMAPLAT,
+    		COOMAPLON,
+    		COOMAPLVL,
+    		COOMAKLAT,
+    		COOMAKLON
+		) VALUES (
+			#{cooStrIdx},
+			#{cooMapLat},
+			#{cooMapLon},
+			#{cooMapLvl},
+			#{cooMakLat},
+			#{cooMakLon}
+		)
+    </insert>
+
+	<!-- 게시판 컨텐츠 조회-->
+    <select id="getBoardContent" resultType="BoardVo">
+        SELECT 
+        	A.BRDIDX,
+        	A.BRDUSERIDX,
+        	B.USERNAME,
+        	A.TITLE,
+        	A.CONTENT,
+        	A.VIEWCOUNT,
+        	A.REGDATE,
+        	A.MODDATE,
+        	A.MODUSERIDX,
+        	A.USEAGE
+        FROM 
+        	SPA_BOARD A
+       	LEFT JOIN 
+       		SPAUSER B ON A.BRDUSERIDX = B.USERIDX
+		WHERE
+			A.USEAGE = 'Y'
+			AND A.BRDIDX = #{brdIdx}
+    </select>
+    
+    <!-- 게시판 컨텐츠 삭제 -->
+    <delete id="delBoardContent" parameterType="BoardVo">
+    	DELETE 
+    	FROM 
+    		SPA_BOARD
+		WHERE 
+			BRDIDX = #{brdIdx}
+    </delete>
+    
+    <!-- 게시판 컨텐츠 수정 -->
+    <update id="updateBoardContent" parameterType="BoardVo">
+		UPDATE 
+			SPA_BOARD
+		SET 
+			TITLE 		= #{title}		,
+			CONTENT 	= #{content}	,
+			MODDATE 	= NOW()			,
+			MODUSERIDX 	= #{brdUserIdx}
+		WHERE
+			BRDIDX = #{brdIdx}
+    </update>
+    
+    <!-- 게시판 조회수 추가 -->
+    <update id="updateBoardCount" parameterType="BoardVo">
+    	UPDATE
+    		SPA_BOARD
+   		SET
+   			VIEWCOUNT = VIEWCOUNT + 1
+		WHERE
+			BRDIDX = #{brdIdx}
+    </update>
+</mapper>

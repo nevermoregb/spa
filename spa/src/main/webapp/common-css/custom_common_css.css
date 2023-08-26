@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+.cus_right_align { 
+	display: flex;
+	-ms-flex-pack: center;
+	justify-content: right; 
+}
+
+.cus_font_santo {
+	font-family: "Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+	font-size: .875rem;
+	color: #818182;
+	margin-top: 10px;
+}
+
+.cus_margin_bottom10 {
+	margin-bottom: 10px;
+}
