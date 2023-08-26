@@ -11,17 +11,19 @@
 <table border="1">
 	<tr>
 		<th>번호</th>
-		<th>사용자이메일</th>
-		<th>비밀번호</th>
-		<th>계급</th>
+		<th>제목</th>
+		<th>작성자</th>
+		<th>작성일</th>
+		<th>조회수</th>
 	<tr>
-	<c:if test="${not empty memberList }">
-		<c:forEach var="list" items="${memberList }">
+	<c:if test="${not empty boardList }">
+		<c:forEach var="list" items="${boardList.getList() }">
 			<tr>
-				<td>${list.userIdx }</td>
-				<td>${list.userId }</td>
-				<td>${list.userPw }</td>
-				<td>${list.userAuth }</td>
+				<td>${list.brdIdx }</td>
+				<td>${list.title }</td>
+				<td>${list.userName }</td>
+				<td>${list.regDate }</td>
+				<td>${list.viewCount }</td>
 			</tr>
 		</c:forEach>
 	</c:if>

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.park.spa.common.SessionUtil;
 import com.park.spa.service.JoinService;
 import com.park.spa.service.LoginService;
 import com.park.spa.service.MailService;
@@ -96,6 +97,72 @@ public class LoginController {
     	
     	return outMap;
     }
+    
+    /**
+     * 전송한 코드세션을 삭제
+     * 
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/cancelMail")
+    public @ResponseBody boolean cancelMail() throws Exception {
+    	SessionUtil.removeAttribute("emailCheckVo");
+    	return true;
+    }
+    
+    /**
+     * 코드시간 재연장
+     * 
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/extendTime")
+    public @ResponseBody boolean extendPutdownCodeTime(@RequestBody MemberVo memberVo) throws Exception {
+    	return mailService.extendPutdownCodeTime(memberVo);
+    }
+    
+    /**
+     * 비밀번호 재설정
+     * 
+     * @return
+     */
+    @GetMapping("/passwordReset")
+    public String changPassword() {
+    	return "change_password";
+    }
+    
+    /**
+     * 입력한 메일주소로 코드 전송 (가입회원일때) 
+     * 
+     * @param paramMap
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/checkMail2")
+    public @ResponseBody Map<String, Object> sendMailCode(@RequestBody Map<String, String> paramMap) throws Exception {
+    	
+    	String userEmail = paramMap.get("userEmail");
+    	Map<String, Object> outMap = loginService.sendMailCode(userEmail);		// 코드전송 및 회원가입여부확인
+    	
+    	return outMap;
+    }
+    
+    /**
+     * 비밀번호 재설정
+     * 
+     * @param memberVo
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/chagePassword")
+    public @ResponseBody Map<String, Object> updatePassword(@RequestBody MemberVo memberVo) throws Exception {
+    	
+    	Map<String, Object> outMap = new HashMap<>();
+    	outMap = memberService.chagePassword(memberVo);
+    	
+    	return outMap;
+    }
+    
     
 
 }

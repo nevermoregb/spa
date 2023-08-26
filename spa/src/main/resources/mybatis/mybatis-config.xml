@@ -11,9 +11,17 @@
       <setting name="jdbcTypeForNull" value="VARCHAR"/>
       <setting name="logImpl" value="LOG4J2"/>
     </settings>
-
+    
     <typeAliases>
         <package name="com.park.spa.vo" />
     </typeAliases>
+    
+<!--     <plugins> -->
+<!-- 		<plugin interceptor="com.github.pagehelper.PageInterceptor"> -->
+<!-- 	     config params as the following -->
+<!-- 			<property name="param1" value="value1"/> -->
+<!-- 		</plugin> -->
+<!-- 	</plugins> -->
 
 </configuration>
+

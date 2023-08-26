@@ -1,7 +1,8 @@
 package com.park.spa.service;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.time.Instant;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.park.spa.common.SessionUtil;
 import com.park.spa.vo.EmailCheckVo;
+import com.park.spa.vo.MemberVo;
 
 import jakarta.mail.internet.MimeMessage;
 
@@ -30,6 +32,8 @@ public class MailService {
 		
 	@Autowired 
 	Environment env;
+	
+	private static final int timeExpired = 3;		//코드인증 제한시간
 		
 	/**
 	 * 이메일 전송
@@ -37,12 +41,13 @@ public class MailService {
 	 * @param sendTo
 	 * @param mailContent
 	 * @return
-	 * @throws UnsupportedEncodingException
+	 * @throws Exception 
 	 */
-	public boolean sendMail(String sendTo, String mailContent) throws UnsupportedEncodingException {
-
+	public boolean sendMail(String sendTo, String mailContent) throws Exception {
 		String mailTitle 	= "이메일 인증 코드입니다.";
 		String decodeSendTo = URLDecoder.decode(sendTo, "UTF-8");
+		
+		SessionUtil.setAttribute("emailCheckVo", null);
 			
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 				
@@ -77,26 +82,34 @@ public class MailService {
 	 * @throws Exception
 	 */
 	public Map<String, Object> emailCodeCheck(Map<String, String> paramMap) throws Exception {
-		
 		Map<String, Object> outMap = new HashMap<>();
-		
+
     	EmailCheckVo emailCheckVo = null;
     	String code = (paramMap.get("code") != null) ? paramMap.get("code") : "";		//화면에서 입력된 코드
     	String savedCode = "";															//세션에 저장된 코드
+        int savedTime = 0;
     	
     	if(SessionUtil.getAttribute("emailCheckVo") != null) {
     		emailCheckVo = (EmailCheckVo) SessionUtil.getAttribute("emailCheckVo");
     		savedCode = emailCheckVo.getCode();
+    		savedTime = emailCheckVo.getByTime();
     	}
     	
     	if(!"".equals(code) && code.equals(savedCode)) {
-    		outMap.put("result", true);
-    		outMap.put("msg", "이메일 확인 완료");
+    		int currentTime = (int) Instant.now().getEpochSecond();			//사용자가 코드를 입력한시간
+    		int timeDiffer = (currentTime - savedTime) / 60;					//이메일 보낸 시간과 입력시간 차
     		
-    		// 확인 이메일 세션에 저장
-    		emailCheckVo.setChecked(true);					
-    		SessionUtil.setAttribute("emailCheckVo", emailCheckVo);
-    		
+    		if(timeDiffer < timeExpired) {
+    			outMap.put("result", true);
+        		outMap.put("msg", "이메일 확인 완료");
+        		
+        		// 확인 이메일 세션에 저장
+        		emailCheckVo.setChecked(true);					
+        		SessionUtil.setAttribute("emailCheckVo", emailCheckVo);
+    		} else {
+    			outMap.put("result", false);
+    			outMap.put("msg", "코드 유효기간이 지났습니다.");
+    		}
     	} else {
     		outMap.put("result", false);
     		outMap.put("msg", "정확한 코드를 입력해 주세요.");
@@ -104,4 +117,22 @@ public class MailService {
     	
     	return outMap;
 	}
+
+	/**
+	 * 타이머 시간 연장
+	 * 
+	 * @param memberVo
+	 * @throws Exception 
+	 */
+	public boolean extendPutdownCodeTime(MemberVo memberVo) throws Exception {
+		EmailCheckVo emailCheckVo = (EmailCheckVo) SessionUtil.getAttribute("emailCheckVo");
+		int currentTime = (int) Instant.now().getEpochSecond();	
+		emailCheckVo.setByTime(currentTime);
+		SessionUtil.setAttribute("emailCheckVo", emailCheckVo);
+		
+		return true;
+		
+	}
+	
+	
 }

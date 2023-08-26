@@ -1,11 +1,13 @@
 package com.park.spa.service;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.park.spa.common.DateUtil;
 import com.park.spa.common.SessionUtil;
 import com.park.spa.common.StringUtil;
 import com.park.spa.vo.EmailCheckVo;
@@ -30,10 +32,11 @@ public class LoginService {
 	 * @throws Exception
 	 */
 	public Map<String, Object> sendJoinCodeMail(String userEmail) throws Exception {
-		
 		Map<String, Object> outMap = new HashMap<>();
 		EmailCheckVo emailCheckVo = new EmailCheckVo();
+		
 		String code = StringUtil.getShortRandomUUid(5);
+		int eta = (int) Instant.now().getEpochSecond(); 		//현재시간 세팅
     	String mailContent = "코드 : " + code;
     	
     	int isMember = memberService.isMemeber(userEmail);
@@ -44,7 +47,8 @@ public class LoginService {
     		if(result) {
     			emailCheckVo.setCode(code);
     			emailCheckVo.setEmail(userEmail);
-    			emailCheckVo.setChecked(true);
+    			emailCheckVo.setByTime(eta);
+    			emailCheckVo.setChecked(false);
     			
     			SessionUtil.setAttribute("emailCheckVo", emailCheckVo);
     			
@@ -67,6 +71,54 @@ public class LoginService {
     	
     	return outMap;
 		
+	}
+
+	/**
+	 * 가입이력이 있는 메일로 코드를 보낸다.
+	 * 
+	 * @param userEmail
+	 * @return
+	 * @throws Exception 
+	 */
+	public Map<String, Object> sendMailCode(String userEmail) throws Exception {
+		Map<String, Object> outMap = new HashMap<>();
+		EmailCheckVo emailCheckVo = new EmailCheckVo();
+		
+		String code = StringUtil.getShortRandomUUid(5);
+		int eta = (int) Instant.now().getEpochSecond(); 		//현재시간 세팅
+    	String mailContent = "코드 : " + code;
+    	
+    	int isMember = memberService.isMemeber(userEmail);
+    	
+    	if(isMember > 0) {
+    		boolean result = mailService.sendMail(userEmail, mailContent);
+    		
+    		if(result) {
+    			emailCheckVo.setCode(code);
+    			emailCheckVo.setEmail(userEmail);
+    			emailCheckVo.setByTime(eta);
+    			emailCheckVo.setChecked(false);
+    			
+    			SessionUtil.setAttribute("emailCheckVo", emailCheckVo);
+    			
+    			outMap.put("result", true);
+    			outMap.put("msg", "메일로 전송된 코드를 입력해 주세요.");
+    			
+    		} else if(!result) {
+    			outMap.put("result", false);
+    			outMap.put("msg", "올바른 이메일을 입력해 주세요");
+    			
+    		} else {
+    			outMap.put("result", false);
+    			outMap.put("msg", "시스템 오류");
+    		}
+    		
+    	} else {
+    		outMap.put("result"	, false);
+    		outMap.put("msg", "회원 가입 이력을 찾을 수 없습니다.");
+    	}
+    	
+    	return outMap;
 	}
 
 }

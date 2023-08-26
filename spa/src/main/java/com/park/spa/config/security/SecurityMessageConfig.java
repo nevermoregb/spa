@@ -7,7 +7,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
-@Component
+/**
+ * 시큐리티 인증 실패시 메세지 커스텀 클래스 (현재사용x)
+ * 
+ */
+//@Component
 public class SecurityMessageConfig {
 	  @Bean
 	  public MessageSource messageSource() {

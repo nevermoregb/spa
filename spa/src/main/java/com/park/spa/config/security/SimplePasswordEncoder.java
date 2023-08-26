@@ -10,9 +10,6 @@ public class SimplePasswordEncoder implements PasswordEncoder {
 	
 	@Override
 	public String encode(CharSequence rawPassword) {
-//		return rawPassword.toString();
-		//bCrypt로 encode 해준다.
-//		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 		return bCryptPasswordEncoder.encode(rawPassword);
 	}
 

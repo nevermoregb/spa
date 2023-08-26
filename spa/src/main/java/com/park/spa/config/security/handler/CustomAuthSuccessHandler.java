@@ -16,7 +16,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 로그인 성공시 세션에 사용자vo를 세팅, 게시판 페이지로 redirect
+ * 로그인 성공시 세션에 사용자vo를 세팅, 메인 페이지로 redirect 해준다.
+ * 
  */
 @Slf4j
 @Service
@@ -29,7 +30,7 @@ public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
 		CustomUser customUser = (CustomUser) authentication.getPrincipal();
 		
 		try {
-			SessionUtil.setAttribute("MemberVo", customUser.getMemberVo());		//로그인 성공시 세션에 유저vo 정보 세팅
+			SessionUtil.setAttribute("MemberVo", customUser.getMemberVo());		//로그인 성공시 세션에 유저vo 세팅
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

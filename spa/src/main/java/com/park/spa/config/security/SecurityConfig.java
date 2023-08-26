@@ -40,7 +40,7 @@ public class SecurityConfig {
 			
 			.authorizeHttpRequests((requests) -> requests
 				.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-				.requestMatchers("/main/**", "/common-js/**").permitAll()
+				.requestMatchers("/main/**", "/common-js/**", "/adminLTE/**", "/common-css/**").permitAll()
 				.anyRequest().authenticated()
 //				.anyRequest().permitAll()
 			)
@@ -51,7 +51,6 @@ public class SecurityConfig {
                 .passwordParameter("password")
                 .successHandler(CustomAuthSuccessHandler)  	
                 .failureHandler(CustomAuthFailureHandler)  	// 로그인 실패 핸들러
-//				.defaultSuccessUrl("/spa/main", true)
 				.permitAll()
 			)
 			.logout((logout) -> logout

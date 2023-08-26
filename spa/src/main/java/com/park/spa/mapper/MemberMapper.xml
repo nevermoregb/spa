@@ -49,7 +49,7 @@
         FROM 
         	SPAUSER
         WHERE
-        	USERID =  #{userName}
+        	USERNAME =  #{userName}
     </select>
     
 	<!-- 가입회원 -->
@@ -72,5 +72,14 @@
         	'Y'
         )
     </insert>
+    
+    <update id="updatePassword" parameterType="MemberVo">
+    	UPDATE 
+    		SPAUSER 
+    	SET 
+    		USERPW = #{userPw}
+   		WHERE
+   			USERID = #{userId}
+    </update>
 
 </mapper>

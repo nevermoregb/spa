@@ -21,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 로그인 실패 시 오류메세지를 위한 클래스
- * 
  * 오류메세지를 HttpServletRequest에 담아 로그인URL로 보낸다.
+ * 
  */
 @Slf4j
 @Service
@@ -47,6 +47,8 @@ public class CustomAuthFailureHandler implements AuthenticationFailureHandler {
 			errorMessage = "알수없는 오류발생";
 		}
 		
+		request.setAttribute("username", request.getParameter("username"));
+		request.setAttribute("password", request.getParameter("password"));
 		request.setAttribute("errorMessage", errorMessage);
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher(ConstantList.DEFAULT_FAILURE_URL);

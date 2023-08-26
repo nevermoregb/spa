@@ -408,18 +408,222 @@ const formToJsonObj = function(data) {
 const $post = function(url, param) {
 	return $.ajax({
 		type		: 'post',
-		dataType	: 'json',
+//		dataType	: 'json',
+//		dataType	: 'html',
 		contentType	: "application/json; charset=utf-8",
 		url			: url,
 		data		: JSON.stringify(formToJsonObj(param)),
 	})
-	
+	.always(() => {
+		mapOnLoad = false;	// 카카오맵 초기화
+	})
 	.fail(function(data, textStatus, xhr){
-	    if(data.responseCode) {
-			console.log(data.responseCode);
-			alert(data.responseCode);
+	    if(data.status == 401) {
+			location.href="/main/login";    // 인증 풀렸을경우 로그인 화면으로.
+		} else if(data.status == 499) {
+			alert('유효하지 않은 요청입니다.');
+		} else if(data.status == 498) {
+			alert('저장에 실패하였습니다.');
 	    } else {
 			alert("오류 발생");
+			if(data.status != null) console.log(data.status);
 		}
 	});
+};
+
+const $postWithFile = function(url, formData) {
+	return $.ajax({
+		type		: 'post',
+		url			: url,
+		data		: formData,
+        processData	: false, 
+        contentType	: false, 
+        cache		: false,
+	})
+	.always(() => {
+		mapOnLoad = false;	// 카카오맵 초기화
+	})
+	.fail(function(data, textStatus, xhr){
+	    if(data.status == 401) {
+			location.href="/main/login";    // 인증 풀렸을경우 로그인 화면으로.
+		} else if(data.status == 499) {
+			alert('유효하지 않은 요청입니다.');
+		} else if(data.status == 498) {
+			alert('저장에 실패하였습니다.');
+	    } else {
+			alert("오류 발생");
+			if(data.status != null) console.log(data.status);
+		}
+	});
+};
+
+//<%-- 게시글 조회 ajax--%>
+const goBoardList = function(obj){
+	let pageNum = $(obj).data('value');
+	let type = $(obj).data('type') == 'main' ? true : false;
+	let searchType;
+	let searchKeyword;
+	
+	if(!type){
+		searchType = $('#searchType').val();
+		searchKeyword = $('#searchKeyword').val(); 
+	} else {
+		$('#searchType, #searchKeyword').val('');
+	}
+	
+	let data = 
+		{
+			"page" 			: pageNum,
+			"searchType"	: searchType,
+			"searchKeyword"	: searchKeyword
+		};
+	
+	$post('/board/list', data)
+	
+	.done(function(data){
+		$('#board_list').html(data);
+	});
+};
+
+//모달 외부 클릭시 닫힘
+//$(document).mouseup(function(e){
+//	var container = $('#write_modal');
+//	var editor = $('.cke_dialog_body');
+//
+//	if( container.has(e.target).length === 0){
+//		if(editor != null && editor.has(e.target).length ===0) {
+//			container.hide();
+//		}
+//	}
+//});
+
+//글쓰기 모달 닫기
+$(document).on('click', '#close_modal', function(){
+	$('#write_modal').hide();
+});
+
+//입력값 체크
+const inputValid = function(obj){
+	let result = true;
+	
+	$(obj).each(function(){
+		let target = $('#' + this);
+		
+		if(target.val().trim() == '') {
+			let msg = target.data('error') + ' 입력해 주세요.';
+			alert(msg);
+			result = false;
+			target.val('');
+			target.focus();
+			return false;
+		}
+	});
+	
+	return result;
+};
+
+//<%--지하철역 조회--%>
+const getStations = function(line, target){
+	let param 		= {'lineNum' : line };	
+	let appendId 	= $('#' + target);		
+	
+	if(line != '') {
+		$post('/board/getStations', param)
+		.done(function(data){
+			if(data != null) {
+				appendId.empty();
+				appendId.append('<option value="">:::: 지하철역 ::::</option>');
+// 				swiperContainer.removeAllSlides();
+				for(let i=0; i < data.length; i++) {
+					appendId.append(new Option(data[i].station, data[i].station));
+// 					appendId.append('<div class="swiper-slide info-box bg-success"><div class="info-box-content"><span class="info-box-text">' + data[i].station + '<span></div></div>');
+				}
+		       
+// 				swiperContainer.update();
+			} else {
+				alert('지하철역 목록을 불러오는데 실패하였습니다.');
+			}
+		});
+	} else {
+		appendId.empty();
+		appendId.append('<option value="">:::: 지하철역 ::::</option>');
+	}
+};
+
+//<%--키워드 검색 완료 시 호출되는 콜백함수 입니다--%>
+const placesSearchCB  = function(data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+        // LatLngBounds 객체에 좌표를 추가합니다
+        let bounds = new kakao.maps.LatLngBounds();
+        
+        displayMarker(data[0]);    
+        bounds.extend(new kakao.maps.LatLng(data[0].y, data[0].x));
+
+        //검색대로 마커
+//         for (let i=0; i<data.length; i++) {
+//             displayMarker(data[i]);    
+//             bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+//         }       
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+        map.setBounds(bounds);
+    } 
+};
+
+//<%--지도에 마커를 표시하는 함수입니다--%>
+const displayMarker = function(place) {
+    // 마커를 생성하고 지도에 표시합니다
+    marker = new kakao.maps.Marker({
+        map		: map,
+        position: new kakao.maps.LatLng(place.y, place.x) 
+    });
+    
+//    <%--마커 드래그이동 가능--%>
+    marker.setDraggable(true);
+    
+//    if(!isMarkerOn) {
+//	    infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+//	    infowindow.open(map, marker);
+//	    isMarkerOn = true;
+//    }
+
+//    <%--마커 클릭이벤트 등록--%>
+//     kakao.maps.event.addListener(marker, 'click', function(mouseEvent) {
+//		<%--최초 카카오맵이 열릴때 지하철역 마킹--%>    	
+// 		if(!isMarkerOn) {
+// 	        // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
+// 	        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+// 	        infowindow.open(map, marker);
+        
+//<%--         마커 이동 후 위치정보 재검색 --%>
+// 		} else {
+// 	        // 클릭한 위도, 경도 정보를 가져옵니다 
+// // 	        let latlng = mouseEvent.latLng; 
+// 	        // 마커 위치를 클릭한 위치로 옮깁니다
+// 	        marker.setPosition(mouseEvent.latLng);
+// 		}
+//     });
+    
+//    kakao.maps.event.addListener(marker, 'dragstart', function() {
+//    	infowindow.close();
+//    });
+    
+// 	kakao.maps.event.addListener(marker, 'dragend', function() {
+//         marker.setPosition(mouseEvent.latLng);
+// 		map.setCenter(marker.getPosition());	//맵 중심위치 변경      
+// 		infowindow.open(map, marker);
+// 		infowindow.close();
+        // 마커 위치를 클릭한 위치로 옮깁니다
+// 	});
+};
+
+//대상이 빈객체인가 아닌지 확인
+const isNotEmptyObj = function(obj) {
+	if(obj.constructor === Object && Object.keys(obj).length !== 0)  {
+		return true;
+	} else {
+		return false;
+	}
 };

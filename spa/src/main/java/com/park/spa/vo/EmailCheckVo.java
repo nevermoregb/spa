@@ -10,5 +10,6 @@ import lombok.ToString;
 public class EmailCheckVo {
 	public String email;
 	public String code;
+	public int byTime;
 	public boolean checked = false;
 }

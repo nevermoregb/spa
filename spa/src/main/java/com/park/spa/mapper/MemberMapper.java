@@ -19,4 +19,6 @@ public interface MemberMapper {
 
 	int isNameUsed(String userName);
 
+	int updatePassword(MemberVo memberVo);
+
 }
